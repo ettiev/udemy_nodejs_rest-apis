@@ -57,6 +57,15 @@ app.use((error, req, res, next) => {
 const MONGOOSE_URI = process.env.MONGOOSE_URI;
 mongoose.connect(MONGOOSE_URI)
 .then(result => {
-    app.listen(8080);
+    const server = app.listen(8080);
+      const io = require("./socket").init(server, {
+         cors: {
+            origin: "http://localhost:3000",
+            methods: ["GET", "POST"],
+         },
+      });
+      io.on("connection", (socket) => {
+         console.log("client connected");
+      });
     console.log("Server started on port 8080") ;   
 }).catch(err => console.log(err));
